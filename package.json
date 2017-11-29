@@ -1,0 +1,32 @@
+{
+  "name": "MtGDiscovery",
+  "version": "2.0.0",
+  "description": "",
+  "main": "entry.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"webpack --watch \" \"lite-server\" ",
+    "build": "webpack -p"
+  },
+  "author": "Dino Pascale",
+  "license": "ISC",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "core-js": "^2.5.1",
+    "dexie": "^2.0.1",
+    "localforage": "^1.5.3",
+    "regenerator-runtime": "^0.11.0",
+    "style-loader": "^0.19.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-regenerator-runtime": "^6.5.0",
+    "concurrently": "^3.5.0",
+    "css-loader": "^0.28.7",
+    "lite-server": "^2.3.0",
+    "webpack": "^3.6.0",
+    "worker-loader": "^1.0.0"
+  }
+}

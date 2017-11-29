@@ -1,0 +1,295 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Mtg Discovery</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet">
+    <style>
+      * {
+        font-size:62.5%;
+        box-sizing: border-box;
+        font-family: 'Lato', sans-serif;
+      }
+      html,body {
+        margin:0;
+        width:100vw;
+        height:100vh;
+      }
+
+      #app {
+        width:100%;
+        height: 100%;
+        position: relative;
+        font-size:1.6rem;
+        will-change: transform;
+        transform:translateY(-65px);
+        transition: transform 250ms ease-in
+      }
+
+      .input-bar {
+        position: absolute;
+        top:0;
+        left:0;
+        width: 100%;
+        height: 65px;
+        display: flex;
+        padding:1rem 1.5rem;
+        z-index:100;
+        background:#333;;
+        transition: background .2s ease
+      }
+
+      .initial, .single {
+        background: #333;;
+      }
+
+      .map {
+        background: rgba(0,0,0,0);
+      }
+
+      .input-bar .bar-el {
+        flex:1;
+        font-size:1.4rem;
+        color:#fff;
+      }
+
+      .input-bar .search-btn {
+        background: url('assets/img/search_icon.png') no-repeat center center;
+        background-size:contain;
+      }
+
+      .input-bar .search-ipt {
+        border:none;
+        border-radius:3px;
+        outline:none;
+        padding:0 1rem;
+        letter-spacing: 2px;
+        font-size:1.8rem;
+        text-transform: uppercase;
+        color:#fff;
+        background: #333;
+        font-weight: 900;
+        transition: background .2s ease
+      }
+
+      .input-bar .search-ipt::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        color:#fff;
+      }
+
+      .input-bar .search-ipt:-moz-placeholder { /* Firefox 18- */
+        color:#fff;
+      }
+
+      .input-bar .search-ipt::-moz-placeholder { /* Firefox 19+ */
+        color:#fff;
+      }
+
+      .input-bar .search-ipt:-ms-input-placeholder { /* IE */
+        color:#fff;
+      }
+
+      .input-bar .search-ipt::-ms-input-placeholder { /* IE Edge */
+        color:#fff;
+      }
+
+      /*.input-bar.map .search-ipt, .input-bar.map .action-button.reset-btn {
+        box-shadow:0 1px 2px rgba(0,0,0,0.2)
+      }*/
+
+      .input-bar.map .search-ipt {
+        border-radius: 3px 0 0 3px
+      }
+
+      .action-button.reset-btn {
+        background:#333 url('./assets/img/close.png') no-repeat center center;
+      }
+
+      .action-button.back-btn {
+        background:#333 url('./assets/img/back.png') no-repeat center center
+      }
+
+      .input-bar.initial > .action-button.back-btn, .input-bar.initial > .action-button.reset-btn {
+        flex:0;
+      }
+
+      .scene {
+        position: absolute;
+        top:65px;
+        left:0;
+        width: 100%;
+        height: calc(100vh - 65px);
+        display: flex;
+        background:#fff;
+        flex-flow:column;
+        will-change:opacity;
+        transition:opacity 200ms ease-out
+      }
+
+      .scene.main {
+        align-items: center;
+        justify-content: center;
+      }
+
+      .scene.suggestion,.scene.filter,.scene.detail,.scene.spinner,.scene.error {
+        display: none;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .scene.map {
+        top:0;
+        height: 100vh;
+        opacity: 0;
+        pointer-events: none;
+        position: relative
+      }
+
+      #mapwrapper {
+        position: relative;
+        width:100%;
+        height:100%;
+      }
+
+      .scene.map .action-button.filter {
+        position:absolute;
+        bottom:30px;
+        right:10px;
+        width:56px;
+        height:56px;
+        border-radius:50%;
+        box-shadow:0 1px 3px rgba(0,0,0,0.3);
+        background:mediumvioletred url('./assets/img/filter_w.png') no-repeat center center;
+      }
+
+      .scene.main .logo {
+        height:120px;
+        width:120px;
+        will-change: transform;
+      }
+
+      .start-rotate {
+        animation:rotate 1s ease-out forwards infinite;
+      }
+
+      @keyframes  rotate {
+        from {
+          transform:rotate(0deg)
+        }
+        to {
+          transform:rotate(180deg)
+        }
+      }
+
+      .scene.main h1, .scene.error h1 {
+        font-size: 4.5rem;
+        margin:1rem 0 2rem 0;
+        line-height: 1.3;
+        letter-spacing: 2px;
+        text-align: center;
+        color: #444;
+        text-transform: uppercase;
+      }
+
+      .scene.main h2 {
+        font-size:2.5rem;
+        margin:0;
+        line-height: 1.5;
+        text-align: center;
+        color: #777;
+      }
+
+      .scene.spinner {
+        justify-content: center;
+      }
+
+      .scene.spinner .loader {
+        background: url('assets/img/loader2.gif') no-repeat center center;
+        background-size: contain;
+        height: 120px;
+        margin-bottom:1rem;
+      }
+
+      .scene h3 {
+        font-size: 1.4rem;
+        text-align: center;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        line-height: 1.6;
+      }
+
+      .scene.spinner .loader, .scene h3,.scene.suggestion .single-el, #mapwrapper {
+        opacity:0;
+        animation:fade-in 1s ease forwards
+      }
+
+
+      @keyframes fade-in {
+        from {
+          opacity:0
+        }
+        to {
+          opacity:1
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="inputbar" class="input-bar initial">
+        <!--<div class="bar-el back-btn" id="back-btn"></div>
+        <input class="bar-el search-ipt" id="search-ipt" type="text" placeholder="inserisci la tua posizione...">
+        <div class="bar-el reset-btn" id="reset-btn"></div>-->
+      </div>
+      <div id="main" class="scene main">
+        <img class="logo start-rotate" id="logo" src="assets/img/logo_discovery.png" />
+        <h1>Mtg Discovery</h1>
+        <h2>Trovare i pptq non è mai stato così facile</h2>
+      </div>
+      <div id="map" class="scene map">
+        <div id="mapwrapper"></div>
+      </div>
+      <div id="suggestion" class="scene suggestion"></div>
+      <div id="filter" class="scene filter"></div>
+      <div id="detail" class="scene detail"></div>
+      <div id="spinner" class="scene spinner">
+        <div class="loader"></div>
+        <h3>Stiamo recuperando le informazioni...</h3>
+      </div>
+      <div id="error" class="scene error"></div>
+    </div>
+  <script
+    async defer
+    src="bundle.js" id="bundle">
+  </script>
+  <script>
+    document.getElementById("bundle").onload = function(){
+      document.querySelector('#app').style.transform = 'translateY(0)'
+      document.querySelector('#logo').classList.remove('start-rotate')
+      var gMapsScripts = document.createDocumentFragment()
+      var cluster = document.createElement('script')
+      cluster.src = './app/markerclusterer.js'
+      gMapsScripts.appendChild(cluster)
+      var gscript = document.createElement('script')
+      gscript.src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCikht7LEwJ9DigS4jX5KX_HzPpmTVLzKo&callback=initMap"
+      gscript.setAttribute('async','')
+      gscript.setAttribute('defer','')
+      gMapsScripts.appendChild(gscript)
+      document.body.appendChild(gMapsScripts)
+
+    }
+  </script>
+  <script>
+    var stylesheet = document.createElement('link');
+    stylesheet.href = 'style/style.css';
+    stylesheet.rel = 'stylesheet';
+    stylesheet.type = 'text/css';
+    // temporarily set media to something inapplicable to ensure it'll fetch without blocking render
+    stylesheet.media = 'only x';
+    // set the media back when the stylesheet loads
+    stylesheet.onload = function() {stylesheet.media = 'all'}
+    document.getElementsByTagName('head')[0].appendChild(stylesheet);
+  </script>
+  </body>
+</html>

@@ -1,0 +1,245 @@
+.scene.suggestion {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.suggestion .single-el{
+  font-size:3.8rem;
+  color:#555;
+  text-transform: uppercase;
+  letter-spacing: .5rem;
+  padding:1.5rem 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.single-el h4 {
+  margin:0;
+}
+
+.break {
+  flex:1;
+  width:100%;
+  background: url('../assets/img/break.png') no-repeat center center;
+  background-size:contain;
+}
+
+.scene.detail {
+  background: transparent;
+}
+
+.scene.detail .content {
+  width:100%;
+  height:100%;
+}
+
+.scene.detail .single-ng {
+  width:100%;
+  height:10%;
+  background:#333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  will-change: transform;
+  transform:translateY(-200px);
+  animation: slide-down .5s forwards ease-out;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+@keyframes slide-down {
+  from {
+    transform:translateY(-200px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.single-ng h2 {
+  font-size:2.2rem;
+  text-transform: uppercase;
+  margin:0;
+  color:#fff
+}
+
+.scene.detail .single-oblo {
+  height:45%;
+  width:100%;
+  background: transparent;
+}
+
+.scene.detail .single-general {
+  width: 100%;
+  height:45%;
+  padding-top:1rem;
+  position: relative;
+  background:#fff;
+  will-change: transform;
+  transform:translateY(200px);
+  animation: slide-up .5s forwards ease-out;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 -3px 6px rgba(0,0,0,0.16), 0 -3px 6px rgba(0,0,0,0.23);
+}
+
+@keyframes slide-up {
+  from {
+      transform:translateY(200px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.infoGrid {
+  display: flex;
+  flex-flow:column;
+  height:100%;
+}
+
+.infoGrid .info-chunk {
+  flex:1;
+  display:flex;
+  align-items: center;
+  padding:.8rem;
+}
+
+.infoGrid .info-chunk.adr {
+  flex:2
+}
+
+.infoGrid .info-chunk h4 {
+  flex:1;
+  margin:0;
+  font-size: 1.3rem;
+  color:#aaa;
+  text-transform: capitalize;
+}
+
+.infoGrid .info-chunk h3 {
+  flex:3;
+  margin:0;
+  font-size:1.8rem;
+  color:#666;
+  text-align: left;
+  letter-spacing: 0;
+  text-transform: none;
+  list-style: 1.4;
+}
+
+.input-bar.suggestion > .back-btn {
+  flex:0;
+}
+
+.input-bar.suggestion > .reset-btn {
+  flex:1
+}
+
+.input-bar.map > .back-btn {
+  flex:0;
+}
+
+.input-bar.map > .reset-btn {
+  flex:1;
+  border-radius: 0 3px 3px 0
+}
+
+.input-bar.single > .back-btn, .input-bar.filter > .back-btn  {
+  flex:1
+}
+
+.input-bar.single > .reset-btn{
+  flex:1;
+  opacity:0
+}
+
+.input-bar.single > .search-ipt,
+.input-bar.filter > .search-ipt {
+  opacity:0;
+  pointer-events: none;
+}
+
+.scene.filter {
+  justify-content: flex-start;
+}
+
+.scene.filter .filter-title {
+  font-size:3rem;
+  color:#333;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  line-height: 1.4;
+  margin: 0;
+  padding:1rem;
+}
+
+.scene.filter .groups-container {
+  flex:2;
+  width:100%;
+}
+
+.groups-container .radio-group {
+  display: flex;
+  flex-flow:row wrap;
+  width:95%;
+  margin:.75rem auto;
+}
+
+.radio-group .label-group {
+  width:100%;
+  font-size: 1.7rem;
+  text-align: left;
+  padding-left: .5rem;
+  margin:1rem 0;
+}
+
+.radio-group input[type=radio] {
+  position: absolute;
+  visibility: hidden;
+  display: none;
+}
+
+.radio-group label {
+  flex:1;
+  padding:.5rem 1rem;
+  font-size:1.4rem;
+  border:solid 3px #333;
+  border-left:none;
+  transition: all 150ms ease-out;
+  background:#fff;
+  color:#333;
+  text-align: center;
+}
+
+.radio-group input[type='radio']:checked + label {
+  background:#333;
+  color:#fff;
+}
+
+.radio-group label:first-of-type {
+  border-left:solid 3px #333;
+  border-radius: 10px 0 0 10px
+}
+
+.radio-group label:last-of-type {
+  border-radius: 0 10px 10px 0
+}
+
+.scene.filter .result-btn {
+  display: flex;
+  flex:1;
+  align-items: center;
+  justify-content: center;
+  width:100%
+}
+
+.result-btn button {
+  background: mediumvioletred;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:10px;
+  width:80%;
+  font-size:1.8rem;
+  letter-spacing: 3px;
+}
