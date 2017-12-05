@@ -15,7 +15,7 @@ Perchè non ho usato nessuno framework frontend (Bootstrap, Vue/React/Angular/Jq
 
 Il pattern che ho alla fine deciso di usare è simile a quello introdotto dai moderni framework js e basato sull'uso di componenti quanto più indipendenti e riusabili all'interno di diversi punti all'interno dell'applicazione. Per quanto riguarda invece la 'comunicazione' fra i diversi componenti ho deciso di usare un pattern simile al 'Observer pattern' con qualche differenza.
 
-##Action e Listener
+**Action e Listener**
 
 Il cervello e cuore dell'app è il *Bridge* , dove viene gestita la logica di business di Mtg Discovery. Qui viene conservato il registro di tutti i Listeners dell'app e l'unico dato atomico e non riconducibile ad altri: l'input (posizione) inserito dall'utente.
 
@@ -28,7 +28,7 @@ La comunicazione con il *Bridge* si articola dunque in due momenti: i componenti
 
 la prima definisce il tipo di evento scatenante, mentre la seconda invia il facoltativo carico di dati necessari a compiere l'operazione richiesta. Il *Bridge*, attraverso uno switch basato sul tipo di **Action**, interpreta il comando ricevuto e chiama le conseguenti funzioni interne per eventuali elaborazioni dei dati contenuti nel *payload*. Alla fine di questo processo il Bridge notifica a tutti i Listeners in ascolto per il particolare evento indicato dalla typeOfAction di aggiornare la propria view nel modo che più ritengono opportuno e che è indicato dal metodo **notify** che ogni componente/Listener ha definito al suo interno.
 
-##Particolari tecnologie usate
+**Particolari tecnologie usate**
 
 Come detto ho deciso volontariamente di non usare tecnologie avanzate, divertendomi con Vanilla JS e la sintassi ES6 e cercando quanto più possibile di usufruire delle nuove funzionalità a disposizione (come ad esempio Class, arrow function e uso estensivo di let e const). Per le chiamate asincrone rivolte al recupero dei dati essenziali per il funzionamento di Mtg Discovery, ho utilizzato **fetch**, mentre per alcune operazioni più dispendiose sul piano di memoria ho deciso di utilizzare funzioni asincrone con la tecnologia dalle **Promise**.
 
@@ -36,9 +36,9 @@ Per quanto riguarda il *Caching* dei dati e per diminuire il numero di chiamate 
 
 Per quanto riguarda la mappa ho utilizzato a piene mani l'API di Google Maps per JS
 
-Per la gestione dei diversi moduli e dei file ho usato Webpack 
+Per la gestione dei diversi moduli e dei file ho usato Webpack
 
-##Demo funzionante
+###Demo funzionante
 
 La demo della webapp funzionante si può trovare su [Mtg Discovery](http://dinopascale.altervista.org/mtgdiscovery2/)
 
