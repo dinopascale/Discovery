@@ -93,7 +93,9 @@ class Map {
     this.bridge = bridge;
     this.map = null;
     this.markerArrays = []
+    this.markerCluster = null;
     this.center = {}
+    this.markerCenter = null;
     this.zoom = 0
 
     this.initMap = this.initMap.bind(this)
@@ -102,12 +104,15 @@ class Map {
     this.clearMarkerFromMap = this.clearMarkerFromMap.bind(this)
     this.setCenter = this.setCenter.bind(this)
     this.handleClickMarker = this.handleClickMarker.bind(this)
+    this.handleResize = this.handleResize.bind(this)
 
     this.DOMElement = document.getElementById('map')
     window.initMap = this.initMap
+    window.addEventListener('resize',this.handleResize,false)
     const filterButton = new ActionButton(this.bridge,this.DOMElement,'SHOW_FILTER','','filter')
+    const newSearch = new ActionButton(this.bridge,this.DOMElement,'NEW_SEARCH','','search')
 
-    this.bridge.registerObserver(this,'ADD_MARKER','SET_CENTER','HIDE_MAP','HIDE_SINGLE')
+    this.bridge.registerObserver(this,'ADD_MARKER','SET_CENTER','HIDE_MAP','SHOW_MAP','HIDE_SINGLE','SET_FILTER','UNSET_FILTER')
   }
 
   initMap() {
@@ -115,9 +120,13 @@ class Map {
     this.bridge.sendAction('ADD_MARKER')
   }
 
+  handleResize() {
+    this.DOMElement.style.height = window.innerHeight+'px'
+    this.DOMElement.querySelector('#mapwrapper').style.height = window.innerHeight+'px'
+  }
+
   addMarker(arr) {
     const self = this
-    console.log('information', arr)
     for(let i = 0,len=arr.length;i<len;i++) {
         let marker = new google.maps.Marker({
             position:arr[i]['geo'],
@@ -130,32 +139,35 @@ class Map {
           self.handleClickMarker(marker)
         })
     }
-    const markerCluster = new MarkerClusterer(this.map, this.markerArrays,{imagePath: './assets/img/m'});
+    this.markerCluster = new MarkerClusterer(this.map, this.markerArrays,{imagePath: './assets/img/m'});
   }
 
-  checkInBounds(zoom,bounds) {
+  checkInBounds(zoom,bounds,arr) {
     let markersInBounds = 0;
-    for(let i=0,len = this.markerArrays.length;i<len && markersInBounds === 0;i++) {
-        if(bounds.contains(this.markerArrays[i].getPosition())) {
+    for(let i=0,len = arr.length;i<len && markersInBounds === 0;i++) {
+        if(bounds.contains(arr[i].getPosition())) {
             markersInBounds++;
         }
     }
-    if(markersInBounds === 0) {
+    if(markersInBounds === 0 && zoom > 5) {
         zoom--;
         this.map.setZoom(zoom);
         const b = this.map.getBounds()
         this.iteration++;
-        this.checkInBounds(zoom,b)
+        this.checkInBounds(zoom,b,arr)
     } else {
-        this.map.fitBounds(bounds);
+        //this.map.fitBounds(bounds);
         return false;
     }
   }
 
-  clearMarkerFromMap() {
-    for (let i = 0, len = this.markerArrays.length; i < len; i++) {
-          this.markerArrays[i].setMap(null);
-        }
+  clearMarkerFromMap(center) {
+    const mC = this.markerCluster
+    mC.clearMarkers();
+    if(center && this.markerCenter) {
+      this.markerCenter.setMap(null)
+    }
+    //this.markerArrays = []
   }
 
   handleClickMarker(marker) {
@@ -166,6 +178,7 @@ class Map {
       clt: this.center.lat(),
       cln: this.center.lng()
     }
+    console.log(props, ' marker');
     this.zoom = this.map.getZoom()
     this.center = this.map.getCenter()
     this.map.panTo(marker.position)
@@ -177,25 +190,54 @@ class Map {
     this.map.setCenter(center);
     const z = this.map.getZoom()
     const bounds = this.map.getBounds()
-    this.checkInBounds(z,bounds)
+    this.checkInBounds(z,bounds,this.markerArrays)
     const centerMarker = new google.maps.Marker({
         position:center,
         animation: google.maps.Animation.DROP,
         map:this.map,
         icon:'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
     });
+    this.markerCenter = centerMarker
     this.center = this.map.getCenter()
   }
 
+  setFilter(arr) {
+    const markerFiltered = []
+    const self = this
+    for(let i = 0,len=arr.length;i<len;i++) {
+        let marker = new google.maps.Marker({
+            position:arr[i]['geo'],
+            map:this.map,
+            id:arr[i]['id'],
+            info: arr[i]['info'],
+            animation: google.maps.Animation.DROP,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png'
+        });
+        markerFiltered.push(marker)
+        marker.addListener('click',() => {
+          self.handleClickMarker(marker)
+        })
+    }
+    const z = this.map.getZoom()
+    const bounds = this.map.getBounds()
+    this.markerCluster = new MarkerClusterer(this.map, markerFiltered,{imagePath: './assets/img/m'});
+    this.checkInBounds(z,bounds,markerFiltered)
+  }
+
   notify(mex,payload) {
-    console.log('mex da map', mex);
+    console.log('mex da map', mex, payload);
     switch(mex) {
       case 'HIDE_MAP':
         this.DOMElement.style.opacity = 0;
         this.DOMElement.style.pointerEvents = 'none'
         break;
+      case 'SHOW_MAP':
+        this.DOMElement.style.opacity = 1;
+        this.DOMElement.style.pointerEvents = 'auto'
+        break;
       case 'SET_CENTER':
-        this.clearMarkerFromMap()
+        this.clearMarkerFromMap(payload)
+        this.markerCluster = new MarkerClusterer(this.map, this.markerArrays,{imagePath: './assets/img/m'})
         this.map.setZoom(mapsOption.zoom)
         this.setCenter(payload)
         this.DOMElement.style.opacity = 1;
@@ -205,8 +247,17 @@ class Map {
         this.map.panTo(this.center)
         this.map.setZoom(this.zoom)
         break;
+      case 'SET_FILTER':
+        this.clearMarkerFromMap()
+        this.setFilter(payload)
+        break;
+      case 'UNSET_FILTER':
+        this.clearMarkerFromMap()
+        this.markerCluster = new MarkerClusterer(this.map, this.markerArrays,{imagePath: './assets/img/m'})
+        break;
       default:
         this.addMarker(payload)
+        break;
     }
   }
 }

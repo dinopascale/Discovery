@@ -6,7 +6,7 @@ The brain of my WebApp: here all the information are sent and dispatched disguis
 ACTION (active) and OBSERVE (passive) in some OBSERVER-ish pattern
 */
 function Bridge() {
-  let inputName = '';
+  let inputName = [];
 
   const observerList = {}
 
@@ -72,41 +72,58 @@ function Bridge() {
   which name begin with the same letter of user's choice
   */
   function createSuggestionList(type,payload) {
-    notifyObserver('CHANGE_SCENE','suggestion')
-    //if InputField is empty show only main message
-    if(payload.length === 0) {
-      notifyObserver('HIDE_MAP')
-      notifyObserver('HIDE_SUGGESTION')
-      notifyObserver('HIDE_ERROR')
-      notifyObserver('CHANGE_SCENE','initial')
-      return false
-    }
-    payload = payload.trim()
-    //simple RegExp for alpha,\' and space only
-    const re = /^[a-zA-Z]|[a-zA-Z]+[a-zA-Z\'\-\s\b]+$/i
-    if(payload.match(new RegExp(re))) {
-      notifyObserver('HIDE_ERROR')
-      payload = payload[0].toUpperCase() + payload.slice(1);
-      API.getCitiesList(payload)
-       .then(data => {
-         const filter = data.filter(city => city.n.startsWith(payload))
-         notifyObserver(type,filter)
-       })
+    console.log('inputName ', inputName, type, payload);
+    if(type === 'NEW_SEARCH' && inputName.length !== 0) {
+      notifyObserver('CREATE_SUGGESTION_LIST',inputName)
     } else {
-      notifyObserver('RAISE_ERROR','inserisci solo lettere')
+      notifyObserver('CHANGE_SCENE','suggestion')
+      //if InputField is empty show only main message
+      if(payload.length === 0) {
+        notifyObserver('HIDE_MAP')
+        notifyObserver('HIDE_SUGGESTION')
+        notifyObserver('HIDE_ERROR')
+        notifyObserver('CHANGE_SCENE','initial')
+        return false
+      }
+      payload = payload.trim()
+      //simple RegExp for alpha,\' and space only
+      const re = /^[a-zA-Z]|[a-zA-Z]+[a-zA-Z\'\-\s\b]+$/i
+      if(payload.match(new RegExp(re))) {
+        notifyObserver('HIDE_ERROR')
+        payload = payload[0].toUpperCase() + payload.slice(1);
+        API.getCitiesList(payload)
+         .then(data => {
+           const filter = data.filter(city => city.n.startsWith(payload))
+           notifyObserver(type,filter)
+         })
+      } else {
+        notifyObserver('RAISE_ERROR','inserisci solo lettere')
+      }
     }
   }
 
   function hideSingle(classList) {
-    console.log(classList);
+    /*
     (classList.contains('filter'))
       ? notifyObserver('HIDE_FILTER')
       : notifyObserver('HIDE_SINGLE');
+    notifyObserver('CHANGE_SCENE','map')*/
+    if(classList.contains('filter')) {
+      notifyObserver('HIDE_FILTER')
+    } else if (classList.contains('single')) {
+      notifyObserver('HIDE_SINGLE')
+    } else if(inputName.length === 0){
+      notifyObserver('SHOW_MAP')
+    } else {
+      notifyObserver('CHANGE_SCENE','close_left')
+    }
     notifyObserver('CHANGE_SCENE','map')
   }
 
   function requestSingle(type,marker) {
     notifyObserver(type,marker)
+    notifyObserver('HIDE_SUGGESTION')
+    notifyObserver('HIDE_FILTER')
     notifyObserver('CHANGE_SCENE','single')
   }
 
@@ -116,20 +133,28 @@ function Bridge() {
   user choice
   */
   function setCenter(type,center) {
-    console.log(center)
+    inputName.length = 0;
+    console.log('center', center)
     const LatLon = {
       lat : center.lat,
       lng : center.lng
     }
+    const centerToList = {
+      lt: center.lat,
+      ln: center.lng,
+      n: center.name,
+      p: center.prov
+    }
+    notifyObserver('RESET_FILTER')
     notifyObserver(type,LatLon)
-    notifyObserver('HIDE_SUGGESTION')
     notifyObserver('CHANGE_SCENE','map')
-    inputName = center.name;
-    notifyObserver('SET_VALUE',inputName)
+    inputName.push(centerToList);
+    notifyObserver('SET_VALUE',center.name)
+
   }
 
   function resetValue() {
-    inputName = '';
+    inputName.length = 0;
     console.log(inputName);
     notifyObserver('SET_VALUE',inputName)
     notifyObserver('CHANGE_SCENE','initial')
@@ -149,6 +174,7 @@ function Bridge() {
         break;
       case 'SET_CENTER':
         setCenter(type,payload)
+        break;
       case 'FILTER_RESULT_LIST':
         break;
       case 'REQUEST_SINGLE':
@@ -159,16 +185,32 @@ function Bridge() {
         break;
       case 'RESET_VALUE':
         resetValue()
+        notifyObserver('RESET_FILTER')
         break;
       case 'HIDE_SINGLE':
         hideSingle(payload)
         break;
       case 'SHOW_FILTER':
         notifyObserver(type,payload)
+        notifyObserver('HIDE_SUGGESTION')
         notifyObserver('CHANGE_SCENE','filter')
         break;
       case 'HIDE_FILTER':
         notifyObserver(type,payload)
+        notifyObserver('SHOW_SUGGESTION')
+        notifyObserver('CHANGE_SCENE','map')
+        break;
+      case 'SET_FILTER':
+        notifyObserver(type,payload)
+        break;
+      case 'NEW_SEARCH':
+        createSuggestionList(type)
+        notifyObserver('SHOW_SUGGESTION')
+        notifyObserver('SET_VALUE',inputName[0].n)
+        notifyObserver('CHANGE_SCENE','suggestion')
+        break;
+      case 'UNSET_FILTER':
+        notifyObserver(type)
         break;
       default:
         console.log('nessuna azione ricevuta')

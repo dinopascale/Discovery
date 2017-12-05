@@ -1,8 +1,6 @@
 module.exports = {
     entry: {
       bundle: './app/index.js',
-      //worker: './app/components/dataService/worker.js',
-      //workerNoDb: './app/components/dataService/workerNoDb.js'
     },
     output: {
       filename: '[name].js'

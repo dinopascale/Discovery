@@ -1,6 +1,7 @@
 .scene.suggestion {
   align-items: flex-start;
   justify-content: flex-start;
+  height:100%;
 }
 
 .suggestion .single-el{
@@ -18,10 +19,17 @@
 }
 
 .break {
-  flex:1;
+  height:40%;
   width:100%;
-  background: url('../assets/img/break.png') no-repeat center center;
+  background: url('../assets/img/error_w.png') no-repeat bottom center;
   background-size:contain;
+}
+
+.break + h2 {
+  font-size: 3Rem;
+  color:#666;
+  text-align:center;
+  width:100%
 }
 
 .scene.detail {
@@ -41,8 +49,8 @@
   justify-content: center;
   align-items: center;
   will-change: transform;
-  transform:translateY(-200px);
-  animation: slide-down .5s forwards ease-out;
+  /*transform:translateY(-200px);
+  animation: slide-down .5s forwards ease-out;*/
   border-radius: 0 0 10px 10px;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
@@ -60,7 +68,8 @@
   font-size:2.2rem;
   text-transform: uppercase;
   margin:0;
-  color:#fff
+  color:#fff;
+  text-align:center
 }
 
 .scene.detail .single-oblo {
@@ -76,8 +85,8 @@
   position: relative;
   background:#fff;
   will-change: transform;
-  transform:translateY(200px);
-  animation: slide-up .5s forwards ease-out;
+  /*transform:translateY(200px);
+  animation: slide-up .5s .5s forwards ease-out;*/
   border-radius: 10px 10px 0 0;
   box-shadow: 0 -3px 6px rgba(0,0,0,0.16), 0 -3px 6px rgba(0,0,0,0.23);
 }
@@ -128,7 +137,7 @@
 }
 
 .input-bar.suggestion > .back-btn {
-  flex:0;
+  flex:1;
 }
 
 .input-bar.suggestion > .reset-btn {
@@ -136,21 +145,21 @@
 }
 
 .input-bar.map > .back-btn {
-  flex:0;
+  flex:1;
 }
 
 .input-bar.map > .reset-btn {
   flex:1;
-  border-radius: 0 3px 3px 0
 }
 
 .input-bar.single > .back-btn, .input-bar.filter > .back-btn  {
   flex:1
 }
 
-.input-bar.single > .reset-btn{
+.input-bar.single > .reset-btn, .input-bar.filter > .reset-btn{
   flex:1;
-  opacity:0
+  opacity:0;
+  pointer-events: none;
 }
 
 .input-bar.single > .search-ipt,
@@ -161,37 +170,140 @@
 
 .scene.filter {
   justify-content: flex-start;
+  background: rgba(255,255,255,.3);
+  overflow:hidden;
 }
 
-.scene.filter .filter-title {
-  font-size:3rem;
-  color:#333;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  line-height: 1.4;
-  margin: 0;
-  padding:1rem;
-}
+/*FILTER CSS*/
 
-.scene.filter .groups-container {
-  flex:2;
+.scene.filter .filter-result {
+  height:10%;
   width:100%;
+  background:#333;
+  color:#fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  will-change: transform;
+  /*transform:translateY(-200px);
+  animation: slide-down .5s .5s forwards ease-out;*/
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
-.groups-container .radio-group {
+.filter-result h2 {
+  font-size:2.2rem;
+  text-transform: uppercase;
+  margin:0;
+  color:#fff
+}
+
+.scene.filter .filter-oblo {
+  width: 100%;
+  height: 45%;
+  position: relative;
+}
+
+.scene.filter .filter-container {
+  width:100%;
+  height:45%;
+  display: flex;
+  flex-flow:column;
+  justify-content: space-between;
+  position: relative;
+  padding: 1.5rem 0 .4rem 0;
+  background: #fff;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 -3px 6px rgba(0,0,0,0.16), 0 -3px 6px rgba(0,0,0,0.23);
+  will-change: transform;
+  /*transform:translateY(200px);
+  animation: slide-up .5s forwards ease-out;*/
+}
+
+.filter-container .show-filter-chosen {
+  width:100%;
+  height:40%;
+  padding-bottom:1.2rem;
+  display: flex;
+  align-items: flex-end;
+  flex-flow: row nowrap;
+}
+
+.show-filter-chosen .filter-tag {
+  flex:1;
+  font-size:1.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+}
+
+.filter-tag.unset {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.filter-tag p {
+  margin:0;
+  padding:1.2rem .6rem;
+  background:#46bcec;
+  color: #fff;
+}
+
+.filter-container .filter-carousel-wrapper {
+  position:relative;
+  height:40%;
+}
+
+.filter-carousel-wrapper .filter-carousel {
+  position:absolute;
+  top:0;
+  left:0;
+  display: flex;
+  flex-flow: row nowrap;
+  height: 100%;
+  align-items: center;
+  will-change: transform;
+  transform:translateX(0);
+  transition: transform .3s ease-in;
+}
+
+.filter-carousel .radio-group {
+  width:100vw;
+  padding:0 1rem;
   display: flex;
   flex-flow:row wrap;
-  width:95%;
-  margin:.75rem auto;
 }
 
-.radio-group .label-group {
+.filter-container .carousel-control {
   width:100%;
-  font-size: 1.7rem;
-  text-align: left;
-  padding-left: .5rem;
-  margin:1rem 0;
+  display: flex;
+  align-items: center;
+  height: 20%
 }
+
+.carousel-control .carousel-control-button {
+  flex:1;
+  text-align: center;
+  font-size: 2rem;
+  text-transform: uppercase;
+  color: #ccc;
+  height:100%;
+  display: flex;
+  justify-content: center;
+  letter-spacing: 2px;
+  transition: all .2s ease-in
+}
+
+.carousel-control .carousel-control-button.active {
+  color: #555;
+}
+
+.carousel-control-button p {
+  margin:0;
+  padding:1.5rem;
+}
+
 
 .radio-group input[type=radio] {
   position: absolute;
@@ -202,8 +314,8 @@
 .radio-group label {
   flex:1;
   padding:.5rem 1rem;
-  font-size:1.4rem;
-  border:solid 3px #333;
+  font-size:1.2rem;
+  border:solid 1px #ccc;
   border-left:none;
   transition: all 150ms ease-out;
   background:#fff;
@@ -212,34 +324,96 @@
 }
 
 .radio-group input[type='radio']:checked + label {
-  background:#333;
+  background:#46bcec;
   color:#fff;
+  border-color: #46bcec;
 }
 
 .radio-group label:first-of-type {
-  border-left:solid 3px #333;
-  border-radius: 10px 0 0 10px
+  border-left:solid 1px #ccc;
+  border-radius: 4px 0 0 4px
 }
 
 .radio-group label:last-of-type {
-  border-radius: 0 10px 10px 0
+  border-radius: 0 4px 4px 0
 }
 
-.scene.filter .result-btn {
-  display: flex;
-  flex:1;
-  align-items: center;
-  justify-content: center;
-  width:100%
+/*Media query*/
+
+@media (min-width:500px) {
+
+  .break {
+    height:20%;
+  }
+
+  .show-filter-chosen .filter-tag {
+    font-size: 2.4rem;
+  }
+  .radio-group label {
+    font-size:1.5rem
+  }
+
+  .infoGrid .info-chunk h4 {
+    font-size: 1.6rem
+  }
+
+  .infoGrid .info-chunk h3 {
+    font-size: 2.2rem;
+  }
+
 }
 
-.result-btn button {
-  background: mediumvioletred;
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  padding:10px;
-  width:80%;
-  font-size:1.8rem;
-  letter-spacing: 3px;
+@media (min-width:700px) {
+
+  .scene.filter .filter-oblo, .scene.detail .single-oblo {
+    height:0;
+  }
+
+  .scene.filter .filter-result, .scene.filter .filter-container, .scene.detail .single-ng, .scene.detail .single-general {
+    border-radius:0;
+    box-shadow: none;
+  }
+
+  .single-general .infoGrid {
+    padding: 0 1rem
+  }
+
+  .infoGrid .info-chunk h4 {
+    font-size: 1.3rem
+  }
+
+  .infoGrid .info-chunk h3 {
+    font-size: 1.8rem;
+  }
+  .scene.filter .action-button.send-filter {
+    left:auto;
+    right:10px;
+  }
+
+  .scene.filter .show-filter-chosen {
+    flex-flow: row wrap;
+    align-content: flex-end;
+  }
+
+  .show-filter-chosen .filter-tag {
+    font-size:2.2rem;
+    flex: 0 0 50%;
+    margin-bottom:1rem
+  }
+
+  .radio-group label {
+    font-size:1.4rem
+  }
+
+
+}
+
+@media (min-width:900px) {
+  .infoGrid .info-chunk h4 {
+    font-size: 1.6rem
+  }
+
+  .infoGrid .info-chunk h3 {
+    font-size: 2.2rem;
+  }
 }

@@ -15,16 +15,40 @@
         margin:0;
         width:100vw;
         height:100vh;
+        background: #f4f4f4;
       }
 
       #app {
         width:100%;
+        margin:0 auto;
         height: 100%;
         position: relative;
         font-size:1.6rem;
-        will-change: transform;
-        transform:translateY(-65px);
-        transition: transform 250ms ease-in
+        display: flex;
+        flex:column;
+        overflow: hidden;
+      }
+
+
+      .layout {
+        position: absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100vh;
+        overflow:hidden;
+        will-change: transform;;
+        transition: all .2s ease-in
+      }
+
+      .layout.left {
+        transform: translateX(-100vw)
+      }
+
+      .layout .layout-container, .layout .layout-container {
+        position: relative;
+        width:100%;
+        height:100%;
       }
 
       .input-bar {
@@ -61,9 +85,9 @@
 
       .input-bar .search-ipt {
         border:none;
+        flex:2;
         border-radius:3px;
         outline:none;
-        padding:0 1rem;
         letter-spacing: 2px;
         font-size:1.8rem;
         text-transform: uppercase;
@@ -142,7 +166,8 @@
         height: 100vh;
         opacity: 0;
         pointer-events: none;
-        position: relative
+        position: relative;
+        background:red;
       }
 
       #mapwrapper {
@@ -151,15 +176,45 @@
         height:100%;
       }
 
-      .scene.map .action-button.filter {
+      .scene.map .action-button.filter, .scene.map .action-button.search, .scene.filter .action-button.send-filter {
         position:absolute;
         bottom:30px;
-        right:10px;
+        left:10px;
         width:56px;
         height:56px;
         border-radius:50%;
         box-shadow:0 1px 3px rgba(0,0,0,0.3);
+      }
+
+      .scene.map .action-button.filter {
         background:mediumvioletred url('./assets/img/filter_w.png') no-repeat center center;
+      }
+
+      .scene.map .action-button.search {
+        bottom: 96px;
+        background: mediumvioletred url('./assets/img/search_w.png') no-repeat center center;
+      }
+
+      .scene.map .name-on-map {
+        position: absolute;
+        top:10px;
+        right:10px;
+        font-size:1.4rem;
+        padding:.5rem;
+        letter-spacing: 2px;
+        background:#333;
+        color:#fff;
+        text-transform: uppercase;
+        z-index:100;
+      }
+
+      .scene.filter .action-button.send-filter {
+        bottom:-26px;
+        z-index: 100;
+      }
+
+      .scene.filter .action-button.send-filter {
+        background: mediumvioletred url('./assets/img/send_w.png') no-repeat center center;
       }
 
       .scene.main .logo {
@@ -233,51 +288,120 @@
           opacity:1
         }
       }
+
+      .scene.help-message {
+        display: none
+      }
+
+      /*MEDIA QUERY*/
+
+      @media (min-width:700px) {
+        #app {
+          flex-flow:row nowrap;
+        }
+
+        .layout {
+          background: #fff;
+        }
+
+        .layout.left {
+          width:40%;
+          max-width: 400px;
+          border-right:1px solid #ccc;
+          box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        }
+
+        .input-bar.initial ~ .scene.help-message {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
+        }
+
+        .input-bar.initial ~ .scene.help-message h3 {
+          font-size: 3.3rem;
+        }
+
+        .layout.right {
+          left:0;
+          width:100%;
+        }
+        /*.scene.main {
+          padding-left:45%;
+        }*/
+
+        .scene.suggestion {
+          padding: 0 1rem;
+        }
+      }
     </style>
   </head>
   <body>
     <div id="app">
-      <div id="inputbar" class="input-bar initial">
-        <!--<div class="bar-el back-btn" id="back-btn"></div>
-        <input class="bar-el search-ipt" id="search-ipt" type="text" placeholder="inserisci la tua posizione...">
-        <div class="bar-el reset-btn" id="reset-btn"></div>-->
+      <div id="rightbar" class="layout right">
+        <div class="layout-container">
+          <div id="main" class="scene main">
+            <img class="logo start-rotate" id="logo" src="assets/img/logo_discovery.png" />
+            <h1>Mtg Discovery</h1>
+            <h2>Trovare i pptq non è mai stato così facile</h2>
+          </div>
+          <div id="map" class="scene map">
+            <div id="name" class="name-on-map">Mtg Discovery</div>
+            <div id="mapwrapper"></div>
+          </div>
+          <div id="spinner" class="scene spinner">
+            <div class="loader"></div>
+            <h3>Stiamo recuperando le informazioni...</h3>
+          </div>
+          <div id="error" class="scene error"></div>
+        </div>
       </div>
-      <div id="main" class="scene main">
-        <img class="logo start-rotate" id="logo" src="assets/img/logo_discovery.png" />
-        <h1>Mtg Discovery</h1>
-        <h2>Trovare i pptq non è mai stato così facile</h2>
+      <div id="leftbar" class="layout left">
+        <div class="layout-container">
+          <div id="inputbar" class="input-bar initial"></div>
+          <div id="suggestion" class="scene suggestion"></div>
+          <div id="detail" class="scene detail scene-top"></div>
+          <div id="filter" class="scene filter scene-top">
+            <div id='result-filter' class="filter-result"></div>
+            <div id="filter-oblo" class="filter-oblo">
+              <div id="send-button" class="action-button send-filter"></div>
+            </div>
+            <div id="filter-container" class="filter-container"></div>
+          </div>
+          <div id="help-message" class="scene help-message">
+            <h3>Inserisci nella barra qui sopra il nome della tua città e al resto pensiamo noi!</h3>
+          </div>
+        </div>
       </div>
-      <div id="map" class="scene map">
-        <div id="mapwrapper"></div>
-      </div>
-      <div id="suggestion" class="scene suggestion"></div>
-      <div id="filter" class="scene filter"></div>
-      <div id="detail" class="scene detail"></div>
-      <div id="spinner" class="scene spinner">
-        <div class="loader"></div>
-        <h3>Stiamo recuperando le informazioni...</h3>
-      </div>
-      <div id="error" class="scene error"></div>
     </div>
+  <script src="./app/markerclusterer.js"></script>
   <script
     async defer
     src="bundle.js" id="bundle">
   </script>
   <script>
     document.getElementById("bundle").onload = function(){
-      document.querySelector('#app').style.transform = 'translateY(0)'
+      window.addEventListener('resize', function() {
+          document.body.style.height = window.innerHeight+'px';
+          document.getElementById('app').style.height = window.innerHeight+'px'
+          document.getElementById('main').style.height = window.innerHeight+'px'
+          /*var scenes = document.querySelectorAll('.scene')
+          for(var count = 0; count < scenes.length; count++) {
+            scenes[count].style.height = window.innerHeight+'px'
+          }*/
+      })
+      document.querySelector('#leftbar').style.transform = 'translateX(0)'
       document.querySelector('#logo').classList.remove('start-rotate')
       var gMapsScripts = document.createDocumentFragment()
-      var cluster = document.createElement('script')
-      cluster.src = './app/markerclusterer.js'
-      gMapsScripts.appendChild(cluster)
+      //var cluster = document.createElement('script')
+      //cluster.src = './app/markerclusterer.js'
+      //gMapsScripts.appendChild(cluster)
       var gscript = document.createElement('script')
       gscript.src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCikht7LEwJ9DigS4jX5KX_HzPpmTVLzKo&callback=initMap"
       gscript.setAttribute('async','')
       gscript.setAttribute('defer','')
       gMapsScripts.appendChild(gscript)
       document.body.appendChild(gMapsScripts)
-
     }
   </script>
   <script>

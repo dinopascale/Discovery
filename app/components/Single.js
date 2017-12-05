@@ -4,11 +4,13 @@ class Single {
   constructor(bridge) {
     this.bridge = bridge;
     this.notify = this.notify.bind(this)
+    this.handleResize = this.handleResize.bind(this)
     //this.closeSingle = this.closeSingle.bind(this)
     this.bridge.registerObserver(this,'REQUEST_SINGLE','HIDE_SINGLE')
 
     this.DOMElement = document.querySelector('#detail')
     this.detail = null;
+    window.addEventListener('resize',this.handleResize,false)
   }
 
   /*closeSingle(ev) {
@@ -19,6 +21,10 @@ class Single {
       return false
     }
   }*/
+
+  handleResize() {
+    this.DOMElement.style.height = `${window.innerHeight- 65}px`
+  }
 
   paintSingle(infos) {
     const frag = document.createDocumentFragment();
