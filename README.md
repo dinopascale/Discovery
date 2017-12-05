@@ -36,6 +36,8 @@ Per quanto riguarda il *Caching* dei dati e per diminuire il numero di chiamate 
 
 Per quanto riguarda la mappa ho utilizzato a piene mani l'API di Google Maps per JS
 
+Per la gestione dei diversi moduli e dei file ho usato Webpack 
+
 ##Demo funzionante
 
 La demo della webapp funzionante si può trovare su [Mtg Discovery](http://dinopascale.altervista.org/mtgdiscovery2/)
